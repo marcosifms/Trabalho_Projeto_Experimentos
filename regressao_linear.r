@@ -12,7 +12,7 @@ for (v in names(dataset)) {
 }
 
 dataset_numerico <- dataset[, sapply(dataset, is.numeric)]
-#cat("Colunas numéricas:", ncol(dataset_numerico), "\n")   # original ficava com bem menos
+#cat("Colunas numéricas:", ncol(dataset_numerico), "\n")
 
 
 # ANÁLISE DESCRITIVA DO ADG (gráficos na aba Plots do RStudio)
@@ -43,6 +43,18 @@ matriz_correlacao <- cor(dataset_numerico)
 png("matriz_correlacao.png", width = 1200, height = 1200, res = 150)
 corrplot(matriz_correlacao, method = "color", type = "upper", tl.cex = 0.5, cl.cex = 0.5)
 dev.off()
+
+# Gráfico 3: variáveis mais correlacionadas com o ADG
+cor_adg <- matriz_correlacao[setdiff(colnames(matriz_correlacao), c("ADG", "FINAL_WEIGHT")), "ADG"]
+top10 <- cor_adg[order(abs(cor_adg), decreasing = TRUE)][1:10]
+print(round(top10, 3))
+par(mar = c(5, 11, 3, 1))
+barplot(rev(top10), horiz = TRUE, las = 1, xlim = c(-1, 1), cex.names = 0.75,
+        col = ifelse(rev(top10) > 0, "#2a78d6", "#eb6834"), border = NA,
+        main = "10 variáveis mais correlacionadas com o ADG",
+        xlab = "Correlação (azul = positiva, laranja = negativa)")
+abline(v = 0)
+par(mar = c(5, 4, 4, 2) + 0.1)
 
 # Original: vars_remover <- c("ADG", "FINAL_WEIGHT")
 vars_remover <- c("ADG", "FINAL_WEIGHT", "ANIMAL", "PERIOD")
